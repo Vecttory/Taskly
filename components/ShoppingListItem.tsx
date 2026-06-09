@@ -1,6 +1,7 @@
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { theme } from "../theme";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import Entypo from "@expo/vector-icons/Entypo";
 
 type Props = {
   name: string;
@@ -29,9 +30,18 @@ export function ShoppingListItem({ name, isCompleted }: Props) {
     <View
       style={[styles.itemContainer, isCompleted && styles.completedContainer]}
     >
-      <Text style={[styles.itemText, isCompleted && styles.completedItemText]}>
-        {name}
-      </Text>
+      <View style={styles.row}>
+        <Entypo
+          name={isCompleted ? "check" : "circle"}
+          size={24}
+          color="black"
+        />
+        <Text
+          style={[styles.itemText, isCompleted && styles.completedItemText]}
+        >
+          {name}
+        </Text>
+      </View>
       <TouchableOpacity onPress={handleDelete} activeOpacity={0.8}>
         <Ionicons
           name="close-circle"
@@ -53,6 +63,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  row: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+  },
   completedContainer: {
     backgroundColor: theme.colorLightGrey,
     borderBottomColor: theme.colorLightGrey,
@@ -60,6 +75,8 @@ const styles = StyleSheet.create({
   itemText: {
     fontSize: 18,
     fontWeight: "200",
+    marginLeft: 8,
+    flex: 1,
   },
   completedItemText: {
     textDecorationLine: "line-through",
