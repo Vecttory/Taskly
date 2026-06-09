@@ -15,7 +15,7 @@ export default function Layout() {
               <Pressable hitSlop={20}>
                 <MaterialIcons
                   name="history"
-                  size={32}
+                  size={28}
                   color={theme.colorGray}
                 />
               </Pressable>
