@@ -34,7 +34,7 @@ export function ShoppingListItem({ name, isCompleted }: Props) {
         <Entypo
           name={isCompleted ? "check" : "circle"}
           size={24}
-          color="black"
+          color={isCompleted ? theme.colorGray : theme.colorCerulean}
         />
         <Text
           style={[styles.itemText, isCompleted && styles.completedItemText]}
