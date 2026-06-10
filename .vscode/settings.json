@@ -1,9 +1,20 @@
 {
+  // Enable Flat Config support (ESLint 9+)
   "eslint.useFlatConfig": true,
+
+  // Supported languages for ESLint validation
   "eslint.validate": [
     "javascript",
     "javascriptreact",
     "typescript",
     "typescriptreact"
-  ]
+  ],
+
+  // Disable default VSCode formatter to prevent conflicts with ESLint/Prettier
+  "editor.formatOnSave": false,
+
+  // Delegate auto-formatting and auto-fixing entirely to ESLint on save
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  }
 }

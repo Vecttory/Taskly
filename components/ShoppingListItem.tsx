@@ -1,4 +1,11 @@
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { theme } from "../theme";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Entypo from "@expo/vector-icons/Entypo";
@@ -6,9 +13,16 @@ import Entypo from "@expo/vector-icons/Entypo";
 type Props = {
   name: string;
   isCompleted?: boolean;
+  onDelete: () => void;
+  onToggleComplete?: () => void;
 };
 
-export function ShoppingListItem({ name, isCompleted }: Props) {
+export function ShoppingListItem({
+  name,
+  isCompleted,
+  onDelete,
+  onToggleComplete,
+}: Props) {
   const handleDelete = () => {
     Alert.alert(
       `Are you sure you want to delete ${name}?`,
@@ -16,7 +30,7 @@ export function ShoppingListItem({ name, isCompleted }: Props) {
       [
         {
           text: "Yes",
-          onPress: () => console.log("Ok, deleting"),
+          onPress: onDelete,
           style: "destructive",
         },
         {
@@ -26,8 +40,10 @@ export function ShoppingListItem({ name, isCompleted }: Props) {
       ],
     );
   };
+
   return (
-    <View
+    <Pressable
+      onPress={onToggleComplete}
       style={[styles.itemContainer, isCompleted && styles.completedContainer]}
     >
       <View style={styles.row}>
@@ -37,19 +53,20 @@ export function ShoppingListItem({ name, isCompleted }: Props) {
           color={isCompleted ? theme.colorGray : theme.colorCerulean}
         />
         <Text
+          numberOfLines={2}
           style={[styles.itemText, isCompleted && styles.completedItemText]}
         >
           {name}
         </Text>
       </View>
-      <TouchableOpacity onPress={handleDelete} activeOpacity={0.8}>
+      <TouchableOpacity onPress={handleDelete} activeOpacity={0.8} hitSlop={10}>
         <Ionicons
           name="close-circle"
           size={28}
           color={isCompleted ? theme.colorGray : theme.colorRed}
         />
       </TouchableOpacity>
-    </View>
+    </Pressable>
   );
 }
 
@@ -75,7 +92,7 @@ const styles = StyleSheet.create({
   itemText: {
     fontSize: 18,
     fontWeight: "200",
-    marginLeft: 8,
+    marginHorizontal: 8,
     flex: 1,
   },
   completedItemText: {
