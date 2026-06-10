@@ -1,7 +1,10 @@
 import { theme } from "../theme";
 import { StyleSheet, TextInput, Text, View, FlatList } from "react-native";
 import { ShoppingListItem } from "../components/ShoppingListItem";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getFromStorage, saveToStorage } from "../utils/storage";
+
+const STORAGE_KEY = "shoppingList";
 
 type ShoppingListItemType = {
   id: string;
@@ -14,6 +17,17 @@ export default function App() {
   const [shoppingList, setShoppingList] = useState<ShoppingListItemType[]>([]);
   const [value, setValue] = useState("");
 
+  useEffect(() => {
+    async function fetchInitial() {
+      const data = await getFromStorage(STORAGE_KEY);
+      if (data) {
+        setShoppingList(data);
+      }
+    }
+
+    fetchInitial();
+  }, []);
+
   const handleSubmit = () => {
     if (value.trim() === "") return;
 
@@ -23,17 +37,25 @@ export default function App() {
       lastUpdatedTimestamp: Date.now(),
     };
 
-    setShoppingList((prevList) => [...prevList, newItem]);
+    setShoppingList((prevList) => {
+      const newShoppingList = [...prevList, newItem];
+      saveToStorage(STORAGE_KEY, newShoppingList);
+      return newShoppingList;
+    });
     setValue("");
   };
 
   const handleDelete = (id: string) => {
-    setShoppingList((prevList) => prevList.filter((item) => item.id !== id));
+    setShoppingList((prevList) => {
+      const newShoppingList = prevList.filter((item) => item.id !== id);
+      saveToStorage(STORAGE_KEY, newShoppingList);
+      return newShoppingList;
+    });
   };
 
   const handleToggleComplete = (id: string) => {
-    setShoppingList((prevList) =>
-      prevList.map((item) =>
+    setShoppingList((prevList) => {
+      const newShoppingList = prevList.map((item) =>
         item.id === id
           ? {
               ...item,
@@ -43,8 +65,10 @@ export default function App() {
                 : Date.now(),
             }
           : item,
-      ),
-    );
+      );
+      saveToStorage(STORAGE_KEY, newShoppingList);
+      return newShoppingList;
+    });
   };
 
   function orderShoppingList(shoppingList: ShoppingListItemType[]) {
