@@ -10,6 +10,7 @@ import {
 import { ShoppingListItem } from "../components/ShoppingListItem";
 import { useEffect, useState } from "react";
 import { getFromStorage, saveToStorage } from "../utils/storage";
+import * as Haptics from "expo-haptics";
 
 const STORAGE_KEY = "shoppingList";
 
@@ -55,6 +56,7 @@ export default function App() {
 
   const handleDelete = (id: string) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setShoppingList((prevList) => {
       const newShoppingList = prevList.filter((item) => item.id !== id);
       saveToStorage(STORAGE_KEY, newShoppingList);
@@ -65,17 +67,25 @@ export default function App() {
   const handleToggleComplete = (id: string) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setShoppingList((prevList) => {
-      const newShoppingList = prevList.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              lastUpdatedTimestamp: Date.now(),
-              completedAtTimestamp: item.completedAtTimestamp
-                ? undefined
-                : Date.now(),
-            }
-          : item,
-      );
+      const newShoppingList = prevList.map((item) => {
+        if (item.id === id) {
+          if (item.completedAtTimestamp) {
+            // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+          } else {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+          }
+          return {
+            ...item,
+            lastUpdatedTimestamp: Date.now(),
+            completedAtTimestamp: item.completedAtTimestamp
+              ? undefined
+              : Date.now(),
+          };
+        }
+        return item;
+      });
       saveToStorage(STORAGE_KEY, newShoppingList);
       return newShoppingList;
     });
